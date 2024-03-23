@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 URL = "https://lambdatest.github.io/sample-todo-app/"
 first_test = "5 of 5 remaining"
 swap_el = "First Item"
+new_el = "New element"
 
 driver = webdriver.Edge(options=webdriver.EdgeOptions())
 driver.get(URL)
@@ -23,14 +24,22 @@ for i in range(len(elements)):
         position = i + 1
         try:
             driver.find_element(By.NAME, f"li{position}").click()
+            last_el = list(map(lambda x: x.text, \
+                    driver.find_elements(By.CLASS_NAME, "done-true")))[-1]
+            assert swap_el == last_el, "Not marked"
+            print(last_el)
             swap_el = elements[position]
         except:
-            pass
             time.sleep(1)
             driver.find_element(By.ID, \
-                                "sampletodotext").send_keys("New element")
+                                "sampletodotext").send_keys(new_el)
             time.sleep(1)
             driver.find_element(By.CLASS_NAME, "btn-primary").click()
             time.sleep(1)
             driver.find_element(By.NAME, f"li{position + 1}").click()
     time.sleep(1)
+
+    
+last_el = list(map(lambda x: x.text, \
+                    driver.find_elements(By.CLASS_NAME, "done-true")))[-1]
+assert last_el == new_el, "Not marked"
